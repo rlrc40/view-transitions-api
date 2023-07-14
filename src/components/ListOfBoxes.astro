@@ -1,0 +1,16 @@
+---
+import BoxItem from "../components/BoxItem.astro";
+
+import { boxes } from "../data/boxes";
+---
+
+<ul class="grid grid-cols-2 md:grid-cols-3 gap-3">
+    {boxes.map( box => {
+        return (
+            <li>
+                <BoxItem title={box.title} img={box.img} id={box.id} />
+            </li>
+        );
+    })}
+    
+</ul>

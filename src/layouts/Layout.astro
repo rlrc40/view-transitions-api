@@ -1,0 +1,56 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+---
+
+<html lang="en">
+  <head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+
+  <body>
+      <div id="content">
+        <slot />
+      </div>
+  </body>
+</html>
+
+<style>
+  ::view-transition-image-pair(root) {
+    isolation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+    display: block;
+  }
+</style>
+
+<script>
+  if (document.startViewTransition) {
+    window.navigation.addEventListener('navigate', (event) => {
+  
+      const toUrl = new URL(event.destination.url)
+  
+      if (location.origin !== toUrl.origin) return;
+  
+      event.intercept({
+        async handler () {
+          const response = await fetch(toUrl.pathname);
+          const text = await response.text();
+  
+          const [, data] = text.match(/<body[^>]*>(.*?)<\/body>/is);
+  
+          document.startViewTransition(() => {
+  
+            document.body.innerHTML = data;
+  
+            document.documentElement.scrollTop = 0;
+          });
+        }
+      });
+    })
+  }
+</script>
